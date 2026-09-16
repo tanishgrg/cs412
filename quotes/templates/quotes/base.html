@@ -1,0 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monkey D. Luffy Quotes</title>
+    <link rel="stylesheet" href="{% static 'quotes/styles.css' %}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Monkey D. Luffy Quote of the Day</h1>
+
+        <nav>
+            <a href="{% url 'quote' %}">Random Quote</a>
+            <a href="{% url 'show_all' %}">All Quotes</a>
+            <a href="{% url 'about' %}">About</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

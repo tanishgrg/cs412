@@ -1,0 +1,17 @@
+{% extends 'quotes/base.html' %}
+
+{% block content %}
+
+<h2>All Luffy Quotes</h2>
+
+{% for quote in quotes %}
+    <p>{{ quote }}</p>
+{% endfor %}
+
+<h2>All Images</h2>
+
+{% for image in images %}
+    <img src="{{ image }}" alt="Monkey D. Luffy">
+{% endfor %}
+
+{% endblock %}
