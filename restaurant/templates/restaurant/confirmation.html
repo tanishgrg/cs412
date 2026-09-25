@@ -1,0 +1,41 @@
+<!--
+File: confirmation.html
+Name: Tanish Gurung
+BU Email: tanishg@bu.edu
+
+Description:
+Displays order details after a customer submits an order.
+-->
+
+{% extends "restaurant/base.html" %}
+
+{% block content %}
+
+<h2>Order Confirmation</h2>
+
+<p>Thank you, {{ name }}!</p>
+
+<h3>Items Ordered</h3>
+
+<ul>
+    {% for item in items %}
+        <li>{{ item }}</li>
+    {% endfor %}
+</ul>
+
+<p><strong>Total: ${{ total }}</strong></p>
+
+<h3>Customer Information</h3>
+
+<p>Phone: {{ phone }}</p>
+<p>Email: {{ email }}</p>
+
+<h3>Special Instructions</h3>
+
+<p>{{ instructions }}</p>
+
+<h3>Estimated Ready Time</h3>
+
+<p>Your order should be ready by {{ ready_time }}.</p>
+
+{% endblock %}

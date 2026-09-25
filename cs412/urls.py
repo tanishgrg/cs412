@@ -16,6 +16,7 @@ Including another URLconf
 """
 INSTALLED_APPS = [
 	"hw", # new app
+    "restaurant",
 ]
 
 from django.contrib import admin
@@ -24,6 +25,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("hw/", include("hw.urls")),
+    path("restaurant/", include("restaurant.urls")),
     path("", include("quotes.urls")),
-
 ]
