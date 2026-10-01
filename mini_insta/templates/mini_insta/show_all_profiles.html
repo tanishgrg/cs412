@@ -1,0 +1,36 @@
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Displays all profiles in the Mini Insta application.
+-->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>All Profiles</h2>
+
+{% for profile in profiles %}
+
+    <div>
+
+        <a href="{% url 'show_profile' profile.pk %}">
+            <img
+                src="{{ profile.profile_image_url }}"
+                alt="{{ profile.username }}"
+                width="200"
+            >
+        </a>
+
+        <h3>
+            <a href="{% url 'show_profile' profile.pk %}">
+                {{ profile.display_name }}
+            </a>
+        </h3>
+
+        <p>@{{ profile.username }}</p>
+
+    </div>
+
+{% endfor %}
+
+{% endblock %}

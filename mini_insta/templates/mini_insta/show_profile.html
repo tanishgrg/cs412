@@ -1,0 +1,30 @@
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Displays the details for one Mini Insta profile.
+-->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>{{ profile.display_name }}</h2>
+
+<img
+    src="{{ profile.profile_image_url }}"
+    alt="{{ profile.username }}"
+    width="400"
+>
+
+<p><strong>Username:</strong> @{{ profile.username }}</p>
+
+<p><strong>Display Name:</strong> {{ profile.display_name }}</p>
+
+<p><strong>Bio:</strong> {{ profile.bio_text }}</p>
+
+<p><strong>Join Date:</strong> {{ profile.join_date }}</p>
+
+<p><strong>Followers:</strong> Coming soon</p>
+
+<p><strong>Following:</strong> Coming soon</p>
+
+{% endblock %}

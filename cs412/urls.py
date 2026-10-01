@@ -23,8 +23,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("hw/", include("hw.urls")),
+    path("admin/", admin.site.urls),
+    path("quotes/", include("quotes.urls")),
     path("restaurant/", include("restaurant.urls")),
-    path("", include("quotes.urls")),
+    path("mini_insta/", include("mini_insta.urls")),
 ]

@@ -1,0 +1,34 @@
+/*
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Styles the Mini Insta application.
+*/
+
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+header {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+nav {
+    margin-bottom: 30px;
+}
+
+nav a {
+    text-decoration: none;
+}
+
+main img {
+    border-radius: 10px;
+}
+
+footer {
+    border-top: 1px solid #ccc;
+    margin-top: 40px;
+    padding-top: 10px;
+}
