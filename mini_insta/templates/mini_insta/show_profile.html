@@ -27,4 +27,29 @@ Description: Displays the details for one Mini Insta profile.
 
 <p><strong>Following:</strong> Coming soon</p>
 
+
+<h2>Posts</h2>
+
+<div class="posts">
+    {% for post in profile.get_all_posts %}
+        <div class="post">
+            <a href="{% url 'show_post' post.pk %}">
+                {% with photo=post.get_all_photos.first %}
+                    {% if photo %}
+                        <img src="{{ photo.image_url }}" alt="Post photo" width="200">
+                    {% else %}
+                        <p>No image available</p>
+                    {% endif %}
+                {% endwith %}
+            </a>
+
+            <p>{{ post.caption }}</p>
+            <p>{{ post.timestamp }}</p>
+        </div>
+    {% empty %}
+        <p>This profile has no posts yet.</p>
+    {% endfor %}
+</div>
+
+
 {% endblock %}

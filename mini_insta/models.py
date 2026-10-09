@@ -16,3 +16,35 @@ class Profile(models.Model):
     def __str__(self):
         """Return the username of this profile."""
         return self.username
+
+    def get_all_posts(self):
+        """Return all posts belonging to this profile, newest first."""
+        return Post.objects.filter(profile=self).order_by("-timestamp")
+
+
+class Post(models.Model):
+    """Represents an Instagram post created by a profile."""
+
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    caption = models.TextField(blank=True)
+
+    def __str__(self):
+        """Return a string representation of this post."""
+        return f"Post {self.pk} by {self.profile.username}"
+
+    def get_all_photos(self):
+        """Return all photos associated with this post."""
+        return Photo.objects.filter(post=self).order_by("timestamp")
+
+
+class Photo(models.Model):
+    """Represents a photo associated with a post."""
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    image_url = models.URLField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return a string representation of this photo."""
+        return f"Photo {self.pk} for Post {self.post.pk}"

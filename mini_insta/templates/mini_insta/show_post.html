@@ -1,0 +1,30 @@
+
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Displays one post and all of its photos.
+-->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>Post by {{ post.profile.username }}</h2>
+
+<p>{{ post.caption }}</p>
+<p>{{ post.timestamp }}</p>
+
+<h3>Photos</h3>
+
+{% for photo in post.get_all_photos %}
+    <img src="{{ photo.image_url }}" alt="Post photo" width="400">
+{% empty %}
+    <p>No photos available.</p>
+{% endfor %}
+
+<p>
+    <a href="{% url 'show_profile' post.profile.pk %}">
+        Back to Profile
+    </a>
+</p>
+
+{% endblock %}
