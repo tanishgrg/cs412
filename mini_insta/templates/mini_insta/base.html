@@ -22,6 +22,13 @@ Description: Base HTML template for the Mini Insta application.
 
     <nav>
         <a href="{% url 'show_all_profiles' %}">All Profiles</a>
+
+        {% if profile %}
+            <a href="{% url 'create_post' profile.pk %}">
+                Create Post
+            </a>
+        {% endif %}
+
     </nav>
 
     <main>
