@@ -16,7 +16,7 @@ Description: Displays one post and all of its photos.
 <h3>Photos</h3>
 
 {% for photo in post.get_all_photos %}
-    <img src="{{ photo.image_url }}" alt="Post photo" width="400">
+    <img src="{{ photo.get_image_url }}" alt="Post photo" width="400">
 {% empty %}
     <p>No photos available.</p>
 {% endfor %}

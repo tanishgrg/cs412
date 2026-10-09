@@ -38,13 +38,23 @@ class Post(models.Model):
         return Photo.objects.filter(post=self).order_by("timestamp")
 
 
+
 class Photo(models.Model):
     """Represents a photo associated with a post."""
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    image_url = models.URLField()
+    image_url = models.URLField(blank=True)
+    image_file = models.ImageField(upload_to="mini_insta/", blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def get_image_url(self):
+        """Return the uploaded image URL or the original image URL."""
+        if self.image_file:
+            return self.image_file.url
+        return self.image_url
 
     def __str__(self):
         """Return a string representation of this photo."""
-        return f"Photo {self.pk} for Post {self.post.pk}"
+        if self.image_file:
+            return f"Uploaded photo {self.pk} for Post {self.post.pk}"
+        return f"URL photo {self.pk} for Post {self.post.pk}"

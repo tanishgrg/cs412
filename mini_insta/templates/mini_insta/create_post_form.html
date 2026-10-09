@@ -1,6 +1,6 @@
 <!--
 Author: Tanish Gurung (tanishg@bu.edu)
-Description: Form for creating a new Mini Insta post.
+Description: Form for creating posts with uploaded photos.
 -->
 
 {% extends 'mini_insta/base.html' %}
@@ -9,10 +9,22 @@ Description: Form for creating a new Mini Insta post.
 
 <h2>Create a Post for {{ profile.username }}</h2>
 
-<form method="POST" action="{% url 'create_post' profile.pk %}">
+<form method="POST"
+      action="{% url 'create_post' profile.pk %}"
+      enctype="multipart/form-data">
+
     {% csrf_token %}
 
     {{ form.as_p }}
+
+    <p>
+        <label for="files">Upload Photos:</label>
+        <input type="file"
+               name="files"
+               id="files"
+               accept="image/*"
+               multiple>
+    </p>
 
     <button type="submit">Create Post</button>
 

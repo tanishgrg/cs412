@@ -36,7 +36,7 @@ Description: Displays the details for one Mini Insta profile.
             <a href="{% url 'show_post' post.pk %}">
                 {% with photo=post.get_all_photos.first %}
                     {% if photo %}
-                        <img src="{{ photo.image_url }}" alt="Post photo" width="200">
+                        <img src="{{ photo.get_image_url }}" alt="Post photo" width="200">
                     {% else %}
                         <p>No image available</p>
                     {% endif %}

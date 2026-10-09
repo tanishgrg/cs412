@@ -46,23 +46,28 @@ class CreatePostView(CreateView):
         context["profile"] = profile
         return context
 
-    def form_valid(self, form):
-        """Save the post with its profile and create its photo."""
-        profile = get_object_or_404(Profile, pk=self.kwargs["pk"])
 
+    def form_valid(self, form):
+        """Save the new post and its uploaded photo files."""
+        profile = get_object_or_404(Profile, pk=self.kwargs["pk"])
         form.instance.profile = profile
 
         response = super().form_valid(form)
 
-        image_url = form.cleaned_data.get("image_url")
+        # Previously, photos were created from image URLs.
+        # image_url = form.cleaned_data.get("image_url")
 
-        if image_url:
+        files = self.request.FILES.getlist("files")
+
+        for file in files:
             Photo.objects.create(
                 post=self.object,
-                image_url=image_url
+                image_file=file
             )
 
         return response
+
+    
 
     def get_success_url(self):
         """Return the detail page URL for the newly created post."""
