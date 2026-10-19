@@ -10,7 +10,22 @@ Description: Displays one post and all of its photos.
 
 <h2>Post by {{ post.profile.username }}</h2>
 
+<p>{{ post.get_likes.count }} Likes</p>
 <p>{{ post.caption }}</p>
+<h3>Comments</h3>
+<p class="post-likes">
+    <strong>❤️ {{ post.get_likes.count }} Likes</strong>
+</p>
+
+{% for comment in post.get_all_comments %}
+    <p>
+        <a href="{% url 'show_profile' comment.profile.pk %}">
+            {{ comment.profile.display_name }}
+        </a>: {{ comment.text }}
+    </p>
+{% empty %}
+    <p>No comments yet.</p>
+{% endfor %}
 <p>{{ post.timestamp }}</p>
 
 <h3>Photos</h3>

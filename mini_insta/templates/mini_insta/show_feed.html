@@ -1,0 +1,66 @@
+
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Displays a personalized feed of posts from followed profiles.
+-->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<div class="feed-container">
+    <h2>{{ profile.display_name }}'s Feed</h2>
+
+    <p>
+        <a href="{% url 'show_profile' profile.pk %}">
+            Back to Profile
+        </a>
+    </p>
+
+    {% for post in profile.get_post_feed %}
+        <div class="feed-post">
+
+            <div class="feed-user">
+                <img src="{{ post.profile.profile_image_url }}"
+                     alt="Profile picture">
+
+                <a href="{% url 'show_profile' post.profile.pk %}">
+                    <strong>{{ post.profile.display_name }}</strong>
+                </a>
+            </div>
+
+            {% for photo in post.get_all_photos %}
+                {% if forloop.first %}
+                    <img class="feed-photo"
+                         src="{{ photo.get_image_url }}"
+                         alt="Post photo">
+                {% endif %}
+            {% endfor %}
+
+            <p><strong>{{ post.get_likes.count }} Likes</strong></p>
+
+            <p>{{ post.caption }}</p>
+            <p>{{ post.timestamp }}</p>
+
+            <h3>Comments</h3>
+
+            {% for comment in post.get_all_comments %}
+                <p>
+                    <strong>{{ comment.profile.username }}</strong>:
+                    {{ comment.text }}
+                </p>
+            {% empty %}
+                <p>No comments yet.</p>
+            {% endfor %}
+
+            <a href="{% url 'show_post' post.pk %}">
+                View Post
+            </a>
+
+        </div>
+    {% empty %}
+        <p>No posts in your feed yet.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Displays the profiles followed by a Mini Insta profile.
+-->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>{{ profile.display_name }} is Following</h2>
+
+{% for followed in profile.get_following %}
+    <p>
+        <a href="{% url 'show_profile' followed.pk %}">
+            {{ followed.display_name }}
+        </a>
+    </p>
+{% empty %}
+    <p>Not following anyone yet.</p>
+{% endfor %}
+
+<a href="{% url 'show_profile' profile.pk %}">Back to Profile</a>
+
+{% endblock %}

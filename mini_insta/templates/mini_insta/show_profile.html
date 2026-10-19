@@ -12,7 +12,7 @@ Description: Displays the details for one Mini Insta profile.
 <img
     src="{{ profile.profile_image_url }}"
     alt="{{ profile.username }}"
-    width="400"
+    class="profile-picture"
 >
 
 <p><strong>Username:</strong> @{{ profile.username }}</p>
@@ -23,9 +23,23 @@ Description: Displays the details for one Mini Insta profile.
 
 <p><strong>Join Date:</strong> {{ profile.join_date }}</p>
 
-<p><strong>Followers:</strong> Coming soon</p>
+<div class="profile-stats">
+    <a href="{% url 'show_followers' profile.pk %}">
+        <strong>{{ profile.get_num_followers }}</strong> Followers
+    </a>
 
-<p><strong>Following:</strong> Coming soon</p>
+    <a href="{% url 'show_following' profile.pk %}">
+        <strong>{{ profile.get_num_following }}</strong> Following
+    </a>
+</div>
+<div class="profile-navigation">
+    <a href="{% url 'show_feed' profile.pk %}">
+        View Feed
+    </a>
+    <a href="{% url 'search' profile.pk %}">
+    Search Mini Insta
+    </a>
+</div>
 
 
 <h2>Posts</h2>
@@ -53,6 +67,7 @@ Description: Displays the details for one Mini Insta profile.
 <a href="{% url 'update_profile' profile.pk %}">
     <button type="button">Update Profile</button>
 </a>
+
 
 
 {% endblock %}

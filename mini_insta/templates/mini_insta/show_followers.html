@@ -1,0 +1,23 @@
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Displays the followers of a Mini Insta profile.
+-->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>Followers of {{ profile.display_name }}</h2>
+
+{% for follower in profile.get_followers %}
+    <p>
+        <a href="{% url 'show_profile' follower.pk %}">
+            {{ follower.display_name }}
+        </a>
+    </p>
+{% empty %}
+    <p>No followers yet.</p>
+{% endfor %}
+
+<a href="{% url 'show_profile' profile.pk %}">Back to Profile</a>
+
+{% endblock %}
