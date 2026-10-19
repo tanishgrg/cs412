@@ -1,0 +1,25 @@
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Displays a confirmation page for deleting a Mini Insta post.
+-->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>Delete Post</h2>
+
+<p>Are you sure you want to delete this post?</p>
+
+<p>{{ post.caption }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Confirm Delete</button>
+</form>
+
+<form action="{% url 'show_profile' profile.pk %}" method="GET">
+    <button type="submit">Cancel</button>
+</form>
+
+{% endblock %}

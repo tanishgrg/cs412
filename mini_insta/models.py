@@ -2,6 +2,7 @@
 # Description: Defines the data models for the Mini Insta application.
 
 from django.db import models
+from django.urls import reverse
 
 
 class Profile(models.Model):
@@ -20,6 +21,10 @@ class Profile(models.Model):
     def get_all_posts(self):
         """Return all posts belonging to this profile, newest first."""
         return Post.objects.filter(profile=self).order_by("-timestamp")
+        
+    def get_absolute_url(self):
+        """Return the URL of this profile's detail page."""
+        return reverse("show_profile", kwargs={"pk": self.pk})
 
 
 class Post(models.Model):

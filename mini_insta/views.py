@@ -3,11 +3,11 @@
 
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView
-
+from django.views.generic import (
+    ListView, DetailView, CreateView, UpdateView, DeleteView
+)
 from .models import Profile, Post, Photo
-from .forms import CreatePostForm
-
+from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 
 class ProfileListView(ListView):
     """Display a list of all profiles."""
@@ -72,3 +72,42 @@ class CreatePostView(CreateView):
     def get_success_url(self):
         """Return the detail page URL for the newly created post."""
         return reverse("show_post", kwargs={"pk": self.object.pk})
+
+class UpdateProfileView(UpdateView):
+    """Display and process the form for updating a profile."""
+
+    model = Profile
+    form_class = UpdateProfileForm
+    template_name = "mini_insta/update_profile_form.html"
+
+class UpdatePostView(UpdateView):
+    """Display and process the form for updating a post."""
+
+    model = Post
+    form_class = UpdatePostForm
+    template_name = "mini_insta/update_post_form.html"
+
+    def get_success_url(self):
+        """Redirect to the post detail page after updating."""
+        return reverse("show_post", kwargs={"pk": self.object.pk})
+
+
+class DeletePostView(DeleteView):
+    """Display a confirmation form and delete a post."""
+
+    model = Post
+    template_name = "mini_insta/delete_post_form.html"
+
+    def get_context_data(self, **kwargs):
+        """Add the post and its profile to the template context."""
+        context = super().get_context_data(**kwargs)
+        context["post"] = self.object
+        context["profile"] = self.object.profile
+        return context
+
+    def get_success_url(self):
+        """Redirect to the post owner's profile after deletion."""
+        return reverse(
+            "show_profile",
+            kwargs={"pk": self.object.profile.pk}
+        )

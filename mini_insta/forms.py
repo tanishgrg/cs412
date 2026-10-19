@@ -2,7 +2,7 @@
 # Description: Defines forms for creating Mini Insta posts.
 
 from django import forms
-from .models import Post
+from .models import Post, Profile
 
 
 class CreatePostForm(forms.ModelForm):
@@ -10,6 +10,25 @@ class CreatePostForm(forms.ModelForm):
 
     class Meta:
         """Configure the model and fields used by the form."""
+
+        model = Post
+        fields = ["caption"]
+
+class UpdateProfileForm(forms.ModelForm):
+    """Form for updating an existing profile."""
+
+    class Meta:
+        """Configure which profile fields can be updated."""
+
+        model = Profile
+        fields = ["display_name", "profile_image_url", "bio_text"]
+
+
+class UpdatePostForm(forms.ModelForm):
+    """Form for updating the caption of an existing post."""
+
+    class Meta:
+        """Configure the model and editable fields."""
 
         model = Post
         fields = ["caption"]

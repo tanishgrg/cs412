@@ -26,5 +26,12 @@ Description: Displays one post and all of its photos.
         Back to Profile
     </a>
 </p>
+<a href="{% url 'update_post' post.pk %}">
+    <button type="button">Update Post</button>
+</a>
+
+<a href="{% url 'delete_post' post.pk %}">
+    <button type="button">Delete Post</button>
+</a>
 
 {% endblock %}

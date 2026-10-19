@@ -50,6 +50,9 @@ Description: Displays the details for one Mini Insta profile.
         <p>This profile has no posts yet.</p>
     {% endfor %}
 </div>
+<a href="{% url 'update_profile' profile.pk %}">
+    <button type="button">Update Profile</button>
+</a>
 
 
 {% endblock %}

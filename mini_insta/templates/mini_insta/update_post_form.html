@@ -1,0 +1,25 @@
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Displays a form for updating an existing post's caption.
+-->
+
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>Update Post</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Save Changes</button>
+</form>
+
+<a href="{% url 'show_post' object.pk %}">
+    <button type="button">Cancel</button>
+</a>
+
+{% endblock %}
