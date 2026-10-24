@@ -1,0 +1,25 @@
+
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Registration page for creating a User and Mini Insta Profile.
+-->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>Create Your Profile</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <h3>Account Information</h3>
+    {{ user_form.as_p }}
+
+    <h3>Profile Information</h3>
+    {{ form.as_p }}
+
+    <button type="submit">Create Profile</button>
+</form>
+
+{% endblock %}

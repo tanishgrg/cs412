@@ -17,6 +17,24 @@ Description: Displays one post and all of its photos.
     <strong>❤️ {{ post.get_likes.count }} Likes</strong>
 </p>
 
+
+<!-- Like and unlike controls for other users' posts -->
+{% if viewer_profile and viewer_profile.pk != post.profile.pk %}
+
+    {% if has_liked %}
+        <form method="POST" action="{% url 'delete_like' post.pk %}">
+            {% csrf_token %}
+            <button type="submit">Unlike</button>
+        </form>
+    {% else %}
+        <form method="POST" action="{% url 'like_post' post.pk %}">
+            {% csrf_token %}
+            <button type="submit">Like</button>
+        </form>
+    {% endif %}
+
+{% endif %}
+
 {% for comment in post.get_all_comments %}
     <p>
         <a href="{% url 'show_profile' comment.profile.pk %}">

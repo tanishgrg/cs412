@@ -21,16 +21,24 @@ Description: Base HTML template for the Mini Insta application.
         <h1>Mini Insta</h1>
     </header>
 
-    <nav>
-        <a href="{% url 'show_all_profiles' %}">All Profiles</a>
+        <nav>
+            <a href="{% url 'show_all_profiles' %}">All Profiles</a>
 
-        {% if profile %}
-            <a href="{% url 'show_feed' profile.pk %}">Home</a>
-            <a href="{% url 'search' profile.pk %}">Search</a>
-            <a href="{% url 'show_profile' profile.pk %}">Profile</a>
-            <a href="{% url 'create_post' profile.pk %}">Create Post</a>
-        {% endif %}
-    </nav>
+            {% if user.is_authenticated %}
+                <a href="{% url 'my_profile' %}">My Profile</a>
+                <a href="{% url 'create_post' %}">Create Post</a>
+                <a href="{% url 'show_feed' %}">My Feed</a>
+                <a href="{% url 'search' %}">Search</a>
+
+                <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Log Out</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Log In</a>
+                <a href="{% url 'create_profile' %}">Create Profile</a>
+            {% endif %}
+        </nav>
 
     <main>
         {% block content %}

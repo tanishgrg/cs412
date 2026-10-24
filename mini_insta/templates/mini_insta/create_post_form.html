@@ -10,7 +10,7 @@ Description: Form for creating posts with uploaded photos.
 <h2>Create a Post for {{ profile.username }}</h2>
 
 <form method="POST"
-      action="{% url 'create_post' profile.pk %}"
+      action="{% url 'create_post' %}"
       enctype="multipart/form-data">
 
     {% csrf_token %}

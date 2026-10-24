@@ -32,3 +32,17 @@ class UpdatePostForm(forms.ModelForm):
 
         model = Post
         fields = ["caption"]
+
+class CreateProfileForm(forms.ModelForm):
+    """Form for creating a new Mini Insta profile."""
+
+    class Meta:
+        """Define the fields for creating a profile."""
+
+        model = Profile
+        fields = [
+            "username",
+            "display_name",
+            "profile_image_url",
+            "bio_text"
+        ]

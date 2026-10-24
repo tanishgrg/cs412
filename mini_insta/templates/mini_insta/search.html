@@ -11,7 +11,7 @@ Description: Displays a form to search Mini Insta profiles and posts.
 <div class="search-container">
     <h2>Search Mini Insta</h2>
 
-    <form method="GET" action="{% url 'search' profile.pk %}">
+    <form method="GET" action="{% url 'search' %}">
         <label for="query">Search profiles and posts:</label>
 
         <textarea id="query" name="query" rows="2" required></textarea>

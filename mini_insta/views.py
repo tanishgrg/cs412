@@ -10,6 +10,31 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from .models import Profile, Post, Photo
 from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.db import transaction
+from django.shortcuts import redirect
+from .forms import CreateProfileForm
+from django.views import View
+from django.shortcuts import redirect
+from django.http import HttpResponseForbidden
+from .models import Follow, Like
+
+class MiniInstaLoginRequiredMixin(LoginRequiredMixin):
+    """Require login through the Mini Insta login page."""
+
+    login_url = reverse_lazy("login")
+
+
+class PostOwnerMixin(MiniInstaLoginRequiredMixin, UserPassesTestMixin):
+    """Allow only the owner of a post to modify it."""
+
+    def test_func(self):
+        """Check whether the logged-in user owns the post."""
+        post = self.get_object()
+        return post.profile.user_id == self.request.user.pk
 
 class ProfileListView(ListView):
     """Display a list of all profiles."""
@@ -19,45 +44,105 @@ class ProfileListView(ListView):
     context_object_name = "profiles"
 
 
+
 class ProfileDetailView(DetailView):
-    """Display one profile and its posts."""
+    """Display a profile and its posts."""
 
     model = Profile
     template_name = "mini_insta/show_profile.html"
     context_object_name = "profile"
 
+    def get_context_data(self, **kwargs):
+        """Add the logged-in user's profile and follow status."""
+        context = super().get_context_data(**kwargs)
+
+        context["viewer_profile"] = None
+        context["is_following"] = False
+
+        if self.request.user.is_authenticated:
+            viewer = Profile.objects.filter(
+                user=self.request.user
+            ).first()
+
+            context["viewer_profile"] = viewer
+
+            if viewer:
+                context["is_following"] = Follow.objects.filter(
+                    profile=self.object,
+                    follower_profile=viewer
+                ).exists()
+
+        return context
+
+
+class MyProfileView(MiniInstaLoginRequiredMixin, DetailView):
+    """Display the logged-in user's profile."""
+
+    model = Profile
+    template_name = "mini_insta/show_profile.html"
+    context_object_name = "profile"
+
+    def get_object(self, queryset=None):
+        """Return the profile belonging to the logged-in user."""
+        return get_object_or_404(
+            Profile,
+            user=self.request.user
+        )
 
 class PostDetailView(DetailView):
-    """Display one post and its photos."""
+    """Display a post, its photos, and the logged-in user's like status."""
 
     model = Post
     template_name = "mini_insta/show_post.html"
     context_object_name = "post"
 
+    def get_context_data(self, **kwargs):
+        """Add the viewer's profile and whether they liked the post."""
+        context = super().get_context_data(**kwargs)
 
-class CreatePostView(CreateView):
+        context["viewer_profile"] = None
+        context["has_liked"] = False
+
+        if self.request.user.is_authenticated:
+            viewer = Profile.objects.filter(
+                user=self.request.user
+            ).first()
+
+            context["viewer_profile"] = viewer
+
+            if viewer:
+                context["has_liked"] = Like.objects.filter(
+                    post=self.object,
+                    profile=viewer
+                ).exists()
+
+        return context
+
+
+class CreatePostView(MiniInstaLoginRequiredMixin, CreateView):
     """Display and process the form for creating a new post."""
 
     form_class = CreatePostForm
     template_name = "mini_insta/create_post_form.html"
 
+    def get_profile(self):
+        """Return the logged-in user's profile."""
+        return get_object_or_404(
+            Profile,
+            user=self.request.user
+        )
+
     def get_context_data(self, **kwargs):
-        """Add the profile from the URL to the template context."""
+        """Add the logged-in user's profile to the template."""
         context = super().get_context_data(**kwargs)
-        profile = get_object_or_404(Profile, pk=self.kwargs["pk"])
-        context["profile"] = profile
+        context["profile"] = self.get_profile()
         return context
 
-
     def form_valid(self, form):
-        """Save the new post and its uploaded photo files."""
-        profile = get_object_or_404(Profile, pk=self.kwargs["pk"])
-        form.instance.profile = profile
+        """Save a post and its uploaded photos for the logged-in user."""
+        form.instance.profile = self.get_profile()
 
         response = super().form_valid(form)
-
-        # Previously, photos were created from image URLs.
-        # image_url = form.cleaned_data.get("image_url")
 
         files = self.request.FILES.getlist("files")
 
@@ -69,20 +154,23 @@ class CreatePostView(CreateView):
 
         return response
 
-    
-
     def get_success_url(self):
-        """Return the detail page URL for the newly created post."""
+        """Redirect to the newly created post."""
         return reverse("show_post", kwargs={"pk": self.object.pk})
 
-class UpdateProfileView(UpdateView):
+class UpdateProfileView(MiniInstaLoginRequiredMixin, UpdateView):
     """Display and process the form for updating a profile."""
 
     model = Profile
     form_class = UpdateProfileForm
     template_name = "mini_insta/update_profile_form.html"
+    
+    def get_object(self, queryset=None):
+        """Return the profile belonging to the logged-in user."""
+        
+        return get_object_or_404(Profile, user=self.request.user)
 
-class UpdatePostView(UpdateView):
+class UpdatePostView(PostOwnerMixin, UpdateView):
     """Display and process the form for updating a post."""
 
     model = Post
@@ -94,7 +182,7 @@ class UpdatePostView(UpdateView):
         return reverse("show_post", kwargs={"pk": self.object.pk})
 
 
-class DeletePostView(DeleteView):
+class DeletePostView(PostOwnerMixin, DeleteView):
     """Display a confirmation form and delete a post."""
 
     model = Post
@@ -129,14 +217,17 @@ class ShowFollowingDetailView(DetailView):
     template_name = "mini_insta/show_following.html"
     context_object_name = "profile"
 
-class ShowFeedView(DetailView):
+class ShowFeedView(MiniInstaLoginRequiredMixin, DetailView):
     """Display a feed of posts from profiles being followed."""
 
     model = Profile
     template_name = "mini_insta/show_feed.html"
     context_object_name = "profile"
+    def get_object(self, queryset=None):
+        """Return the profile belonging to the logged-in user."""
+        return get_object_or_404(Profile, user=self.request.user)
 
-class SearchView(ListView):
+class SearchView(MiniInstaLoginRequiredMixin, ListView):
     """Display a search form and matching profiles and posts."""
 
     template_name = "mini_insta/search_results.html"
@@ -145,7 +236,7 @@ class SearchView(ListView):
     def dispatch(self, request, *args, **kwargs):
         """Show the search form when no query has been submitted."""
         if "query" not in request.GET:
-            profile = get_object_or_404(Profile, pk=self.kwargs["pk"])
+            profile = get_object_or_404(Profile, user=request.user)
             return render(
                 request,
                 "mini_insta/search.html",
@@ -171,7 +262,7 @@ class SearchView(ListView):
         query = self.request.GET.get("query", "").strip()
 
         context["profile"] = get_object_or_404(
-            Profile, pk=self.kwargs["pk"]
+            Profile, user=self.request.user
         )
         context["query"] = query
         context["posts"] = context["object_list"]
@@ -186,3 +277,119 @@ class SearchView(ListView):
             context["profiles"] = Profile.objects.none()
 
         return context
+
+
+class CreateProfileView(CreateView):
+    """Allow visitors to register and create a Mini Insta profile."""
+
+    model = Profile
+    form_class = CreateProfileForm
+    template_name = "mini_insta/create_profile_form.html"
+
+    def get_context_data(self, **kwargs):
+        """Add the Django user registration form to the context."""
+        context = super().get_context_data(**kwargs)
+
+        if "user_form" not in context:
+            context["user_form"] = UserCreationForm()
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """Validate the user and profile forms together."""
+        self.object = None
+
+        profile_form = self.get_form()
+        user_form = UserCreationForm(request.POST)
+
+        profile_valid = profile_form.is_valid()
+        user_valid = user_form.is_valid()
+
+        if profile_valid and user_valid:
+            with transaction.atomic():
+                user = user_form.save()
+                profile_form.instance.user = user
+                self.object = profile_form.save()
+
+            login(
+                request,
+                user,
+                backend="django.contrib.auth.backends.ModelBackend"
+            )
+
+            return redirect("my_profile")
+
+        context = self.get_context_data(
+            form=profile_form,
+            user_form=user_form
+        )
+        return self.render_to_response(context)
+
+class FollowProfileView(MiniInstaLoginRequiredMixin, View):
+    """Allow the logged-in user to follow another profile."""
+
+    def post(self, request, pk):
+        """Create a follow relationship for the specified profile."""
+        follower = get_object_or_404(Profile, user=request.user)
+        profile = get_object_or_404(Profile, pk=pk)
+
+        if follower == profile:
+            return HttpResponseForbidden("You cannot follow yourself.")
+
+        Follow.objects.get_or_create(
+            profile=profile,
+            follower_profile=follower
+        )
+
+        return redirect("show_profile", pk=pk)
+
+
+class DeleteFollowView(MiniInstaLoginRequiredMixin, View):
+    """Allow the logged-in user to unfollow another profile."""
+
+    def post(self, request, pk):
+        """Delete an existing follow relationship."""
+        follower = get_object_or_404(Profile, user=request.user)
+        profile = get_object_or_404(Profile, pk=pk)
+
+        Follow.objects.filter(
+            profile=profile,
+            follower_profile=follower
+        ).delete()
+
+        return redirect("show_profile", pk=pk)
+
+
+class LikePostView(MiniInstaLoginRequiredMixin, View):
+    """Allow the logged-in user to like another user's post."""
+
+    def post(self, request, pk):
+        """Create a like for the specified post."""
+        profile = get_object_or_404(Profile, user=request.user)
+        post = get_object_or_404(Post, pk=pk)
+
+        if post.profile == profile:
+            return HttpResponseForbidden("You cannot like your own post.")
+
+        Like.objects.get_or_create(
+            post=post,
+            profile=profile
+        )
+
+        return redirect("show_post", pk=pk)
+
+
+class DeleteLikeView(MiniInstaLoginRequiredMixin, View):
+    """Allow the logged-in user to remove their like from a post."""
+
+    def post(self, request, pk):
+        """Delete the user's existing like."""
+        profile = get_object_or_404(Profile, user=request.user)
+        post = get_object_or_404(Post, pk=pk)
+
+        Like.objects.filter(
+            post=post,
+            profile=profile
+        ).delete()
+
+        return redirect("show_post", pk=pk)

@@ -1,3 +1,4 @@
+
 <!--
 Author: Tanish Gurung (tanishg@bu.edu)
 Description: Displays the details for one Mini Insta profile.
@@ -32,15 +33,33 @@ Description: Displays the details for one Mini Insta profile.
         <strong>{{ profile.get_num_following }}</strong> Following
     </a>
 </div>
-<div class="profile-navigation">
-    <a href="{% url 'show_feed' profile.pk %}">
-        View Feed
-    </a>
-    <a href="{% url 'search' profile.pk %}">
-    Search Mini Insta
-    </a>
-</div>
 
+
+<!-- Follow and unfollow controls for other profiles -->
+{% if viewer_profile and viewer_profile.pk != profile.pk %}
+
+    {% if is_following %}
+        <form method="POST" action="{% url 'delete_follow' profile.pk %}">
+            {% csrf_token %}
+            <button type="submit">Unfollow</button>
+        </form>
+    {% else %}
+        <form method="POST" action="{% url 'follow_profile' profile.pk %}">
+            {% csrf_token %}
+            <button type="submit">Follow</button>
+        </form>
+    {% endif %}
+
+{% endif %}
+
+{% if user.is_authenticated and profile.user_id == user.pk %}
+    <div class="profile-navigation">
+        <a href="{% url 'create_post' %}">Create Post</a>
+        <a href="{% url 'update_profile' %}">Update Profile</a>
+        <a href="{% url 'show_feed' %}">View Feed</a>
+        <a href="{% url 'search' %}">Search Mini Insta</a>
+    </div>
+{% endif %}
 
 <h2>Posts</h2>
 
@@ -59,15 +78,15 @@ Description: Displays the details for one Mini Insta profile.
 
             <p>{{ post.caption }}</p>
             <p>{{ post.timestamp }}</p>
+
+            {% if user.is_authenticated and post.profile.user_id == user.pk %}
+                <a href="{% url 'update_post' post.pk %}">Update Post</a>
+                <a href="{% url 'delete_post' post.pk %}">Delete Post</a>
+            {% endif %}
         </div>
     {% empty %}
         <p>This profile has no posts yet.</p>
     {% endfor %}
 </div>
-<a href="{% url 'update_profile' profile.pk %}">
-    <button type="button">Update Profile</button>
-</a>
-
-
 
 {% endblock %}

@@ -1,0 +1,26 @@
+<!--
+Author: Tanish Gurung (tanishg@bu.edu)
+Description: Login page for Mini Insta users.
+-->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h2>Log In</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <input
+        type="hidden"
+        name="next"
+        value="{{ next|default:'/mini_insta/' }}"
+    >
+
+    <button type="submit">Log In</button>
+</form>
+
+{% endblock %}
