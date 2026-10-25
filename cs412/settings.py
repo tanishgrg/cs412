@@ -148,3 +148,8 @@ CS_DEPLOYMENT_HOSTNAME = 'cs-webapps.bu.edu'
 if socket.gethostname() == CS_DEPLOYMENT_HOSTNAME:
     STATIC_URL = '/tanishg/static/'
     MEDIA_URL = '/tanishg/media/'
+
+# Redirect users to Mini Insta after login and logout.
+LOGIN_URL = "/mini_insta/login/"
+LOGIN_REDIRECT_URL = "/mini_insta/"
+LOGOUT_REDIRECT_URL = "/mini_insta/"
