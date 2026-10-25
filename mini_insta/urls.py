@@ -61,7 +61,7 @@ urlpatterns = [
         "login/",
         auth_views.LoginView.as_view(
             template_name="mini_insta/login.html",
-            next_page="show_all_profiles"
+            next_page="/tanishg/mini_insta/"
         ),
         name="login"
     ),
