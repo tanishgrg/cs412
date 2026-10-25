@@ -14,11 +14,7 @@ Description: Login page for Mini Insta users.
 
     {{ form.as_p }}
 
-    <input
-        type="hidden"
-        name="next"
-        value="{{ next|default:'/mini_insta/' }}"
-    >
+    <input type="hidden" name="next" value="{{ next|default:'/mini_insta/' }}">
 
     <button type="submit">Log In</button>
 </form>
