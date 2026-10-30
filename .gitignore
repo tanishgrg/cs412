@@ -52,3 +52,5 @@ desktop.ini
 htmlcov/
 .coverage
 .coverage.*
+
+voter_analytics/newton_voters.csv

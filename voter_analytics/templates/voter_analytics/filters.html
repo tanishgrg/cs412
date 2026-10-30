@@ -1,0 +1,93 @@
+
+<!--
+File: filters.html
+Name: Tanish Gurung
+BU Username: tanishg
+Description: Reusable voter filtering form for
+the voter list and graphs pages.
+-->
+
+<h2>Filter Voters</h2>
+
+<form method="GET">
+    <label>Party:</label>
+    <select name="party">
+        <option value="">All Parties</option>
+        {% for party in parties %}
+            <option value="{{ party }}"
+                {% if selected.party == party %}selected{% endif %}>
+                {{ party }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label>Minimum Birth Year:</label>
+    <select name="min_year">
+        <option value="">Any</option>
+        {% for year in years %}
+            <option value="{{ year }}"
+                {% if selected.min_year == year|stringformat:"s" %}selected{% endif %}>
+                {{ year }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label>Maximum Birth Year:</label>
+    <select name="max_year">
+        <option value="">Any</option>
+        {% for year in years %}
+            <option value="{{ year }}"
+                {% if selected.max_year == year|stringformat:"s" %}selected{% endif %}>
+                {{ year }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label>Voter Score:</label>
+    <select name="voter_score">
+        <option value="">Any</option>
+        {% for score in scores %}
+            <option value="{{ score }}"
+                {% if selected.voter_score == score|stringformat:"s" %}selected{% endif %}>
+                {{ score }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <h3>Election Participation</h3>
+
+    <label>
+        <input type="checkbox" name="v20state"
+            {% if selected.v20state %}checked{% endif %}>
+        2020 State
+    </label>
+
+    <label>
+        <input type="checkbox" name="v21town"
+            {% if selected.v21town %}checked{% endif %}>
+        2021 Town
+    </label>
+
+    <label>
+        <input type="checkbox" name="v21primary"
+            {% if selected.v21primary %}checked{% endif %}>
+        2021 Primary
+    </label>
+
+    <label>
+        <input type="checkbox" name="v22general"
+            {% if selected.v22general %}checked{% endif %}>
+        2022 General
+    </label>
+
+    <label>
+        <input type="checkbox" name="v23town"
+            {% if selected.v23town %}checked{% endif %}>
+        2023 Town
+    </label>
+
+    <p>
+        <button type="submit">Apply Filters</button>
+        <a href="{{ request.path }}">Clear Filters</a>
+    </p>
+</form>

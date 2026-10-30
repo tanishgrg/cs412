@@ -1,0 +1,75 @@
+
+
+<!--
+File: voter_detail.html
+Name: Tanish Gurung
+BU Username: tanishg
+Description: Displays an individual voter's information,
+election participation history, and Google Maps link.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voter Details</title>
+</head>
+<body>
+    <h1>Voter Details</h1>
+
+    <a href="{% url 'voters' %}">Back to All Voters</a>
+
+    <h2>{{ voter.first_name }} {{ voter.last_name }}</h2>
+
+    <h3>Personal Information</h3>
+
+    <p>First Name: {{ voter.first_name }}</p>
+    <p>Last Name: {{ voter.last_name }}</p>
+    <p>Address: {{ voter.street_number }} {{ voter.street_name }} {{ voter.apartment_number }}</p>
+    <p>Zip Code: {{ voter.zip_code }}</p>
+    <p>Date of Birth: {{ voter.date_of_birth }}</p>
+    <p>Date of Registration: {{ voter.date_of_registration }}</p>
+    <p>Party Affiliation: {{ voter.party_affiliation }}</p>
+    <p>Precinct Number: {{ voter.precinct_number }}</p>
+    <p>Voter Score: {{ voter.voter_score }}</p>
+
+    <h3>Election Participation</h3>
+
+    <table border="1">
+        <tr>
+            <th>Election</th>
+            <th>Voted?</th>
+        </tr>
+        <tr>
+            <td>2020 State</td>
+            <td>{{ voter.v20state|yesno:"Yes,No" }}</td>
+        </tr>
+        <tr>
+            <td>2021 Town</td>
+            <td>{{ voter.v21town|yesno:"Yes,No" }}</td>
+        </tr>
+        <tr>
+            <td>2021 Primary</td>
+            <td>{{ voter.v21primary|yesno:"Yes,No" }}</td>
+        </tr>
+        <tr>
+            <td>2022 General</td>
+            <td>{{ voter.v22general|yesno:"Yes,No" }}</td>
+        </tr>
+        <tr>
+            <td>2023 Town</td>
+            <td>{{ voter.v23town|yesno:"Yes,No" }}</td>
+        </tr>
+    </table>
+
+    <h3>Location</h3>
+
+    <a href="https://www.google.com/maps/search/?api=1&amp;query={{ voter.street_number }}%20{{ voter.street_name|urlencode }}%20Newton%2C%20MA%20{{ voter.zip_code }}"
+       target="_blank" rel="noopener noreferrer">
+        View Address on Google Maps
+    </a>
+
+    <p>
+        <a href="{% url 'voters' %}">Back to Voter List</a>
+    </p>
+</body>
+</html>
